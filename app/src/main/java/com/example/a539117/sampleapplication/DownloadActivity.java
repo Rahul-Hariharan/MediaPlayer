@@ -37,7 +37,7 @@ public class DownloadActivity extends AppCompatActivity {
     ScheduledExecutorService mScheduledExecutorService;
     String sampleVideoURL = "http://download.wavetlan.com/SVV/Media/HTTP/MP4/ConvertedFiles/Media-Convert/Unsupported/test7.mp4";
     String sampleAudioURL = "http://www.tonycuffe.com/mp3/cairnomount_lo.mp3";
-    String URL = sampleAudioURL;
+    String URL = sampleVideoURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
