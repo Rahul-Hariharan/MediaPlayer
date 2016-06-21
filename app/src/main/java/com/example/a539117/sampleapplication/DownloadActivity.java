@@ -35,6 +35,9 @@ public class DownloadActivity extends AppCompatActivity {
     private Handler mHandler;
     MediaController mMediaController;
     ScheduledExecutorService mScheduledExecutorService;
+    String sampleVideoURL = "http://download.wavetlan.com/SVV/Media/HTTP/MP4/ConvertedFiles/Media-Convert/Unsupported/test7.mp4";
+    String sampleAudioURL = "http://www.tonycuffe.com/mp3/cairnomount_lo.mp3";
+    String URL = sampleAudioURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +47,10 @@ public class DownloadActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mHandler = new Handler();
-        File folder = new File(getApplicationContext().getFilesDir(),"/videos");
-        final String path = folder + "/" +"video.mp4";
-
+        File folder = new File(getApplicationContext().getFilesDir(),"/media");
+        String urlSegments[] = URL.split("/");
+        final String path = folder + "/" + urlSegments[urlSegments.length-1];
+        Log.v("path",path);
         mVideoView = (VideoView)findViewById(R.id.video_view);
         mMediaController = new MediaController(this);
         mMediaController.setAnchorView(mVideoView);
@@ -72,7 +76,7 @@ public class DownloadActivity extends AppCompatActivity {
             if (book.exists()) {
                 book.delete();
             }
-            new DownloadTask().execute("http://download.wavetlan.com/SVV/Media/HTTP/MP4/ConvertedFiles/Media-Convert/Unsupported/test7.mp4");
+            new DownloadTask().execute(URL);
         }
         else {
             mVideoView.setVideoPath(path);
@@ -142,12 +146,13 @@ public class DownloadActivity extends AppCompatActivity {
         protected Void doInBackground(String[] params) {
 
             try {
-                File folder = new File(getApplicationContext().getFilesDir(),"/videos");
+                File folder = new File(getApplicationContext().getFilesDir(),"/media");
                 if (!folder.exists()) {
                     folder.mkdirs();
                 }
 
-                java.lang.String path = folder +"/" +"video.mp4";
+                String urlSegments[] = ((String)params[0]).split("/");
+                java.lang.String path = folder +"/" + urlSegments[urlSegments.length-1];
                 Log.v("path", path);
                 URL url = new URL((String)params[0]);
                 URLConnection connection = url.openConnection();
