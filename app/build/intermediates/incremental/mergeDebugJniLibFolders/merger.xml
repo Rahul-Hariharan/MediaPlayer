@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="C:\Users\539117\AndroidStudioProjects\SampleApplication\app\src\main\jniLibs"/></dataSet><dataSet config="debug"><source path="C:\Users\539117\AndroidStudioProjects\SampleApplication\app\src\debug\jniLibs"/></dataSet></merger>
+<merger version="3"><dataSet config="main"><source path="C:\Users\rahul\Documents\Android Projects\MediaPlayer\app\src\main\jniLibs"/></dataSet><dataSet config="debug"><source path="C:\Users\rahul\Documents\Android Projects\MediaPlayer\app\src\debug\jniLibs"/></dataSet></merger>
