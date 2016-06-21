@@ -39,6 +39,14 @@ public class DownloadActivity extends AppCompatActivity {
     String sampleAudioURL = "http://www.tonycuffe.com/mp3/cairnomount_lo.mp3";
     String URL = sampleVideoURL;
 
+    Runnable UpdateCurrentPosition = new Runnable(){
+
+        @Override
+        public void run() {
+            currentposition = mVideoView.getCurrentPosition();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,10 +59,12 @@ public class DownloadActivity extends AppCompatActivity {
         String urlSegments[] = URL.split("/");
         final String path = folder + "/" + urlSegments[urlSegments.length-1];
         Log.v("path",path);
+
         mVideoView = (VideoView)findViewById(R.id.video_view);
         mMediaController = new MediaController(this);
         mMediaController.setAnchorView(mVideoView);
         mVideoView.setMediaController(mMediaController);
+
         mVideoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
@@ -71,6 +81,15 @@ public class DownloadActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                if (mScheduledExecutorService != null)
+                    mScheduledExecutorService.shutdown();
+            }
+        });
+
         if(isNetworkAvailable()) {
             File book = new File(path);
             if (book.exists()) {
@@ -89,16 +108,7 @@ public class DownloadActivity extends AppCompatActivity {
             });
         }
 
-        mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                if(mScheduledExecutorService != null)
-                    mScheduledExecutorService.shutdown();
-            }
-        });
-
-        mScheduledExecutorService =
-                new ScheduledExecutor(1);
+        mScheduledExecutorService = new ScheduledExecutor(1);
 
         mScheduledExecutorService.scheduleWithFixedDelay(new Runnable(){
             @Override
@@ -108,13 +118,12 @@ public class DownloadActivity extends AppCompatActivity {
         },3000,1000,TimeUnit.MILLISECONDS);
     }
 
-    Runnable UpdateCurrentPosition = new Runnable(){
-
-        @Override
-        public void run() {
-            currentposition = mVideoView.getCurrentPosition();
-        }
-    };
+    @Override
+    protected void onStop(){
+        super.onStop();
+        if(mScheduledExecutorService != null)
+            mScheduledExecutorService.shutdown();
+    }
 
     private void mediaErrorExtra(MediaPlayer mp, int extra, String path){
         switch(extra){
@@ -154,6 +163,7 @@ public class DownloadActivity extends AppCompatActivity {
                 String urlSegments[] = ((String)params[0]).split("/");
                 java.lang.String path = folder +"/" + urlSegments[urlSegments.length-1];
                 Log.v("path", path);
+
                 URL url = new URL((String)params[0]);
                 URLConnection connection = url.openConnection();
                 InputStream inputstream = connection.getInputStream();
